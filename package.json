@@ -1,0 +1,11 @@
+{
+  "name": "amigo_bot",
+  "version": "1.0.0",
+  "main": "index.js",
+  "author": "Lucas Pinheiro <lucasbezerra@febracis.com.br>",
+  "license": "MIT",
+  "devDependencies": {
+    "serverless": "^2.63.0",
+    "serverless-python-requirements": "^5.1.1"
+  }
+}

@@ -1,0 +1,37 @@
+service: amigo-bot
+
+frameworkVersion: "2"
+
+custom:
+  pythonRequirements:
+    dockerizePip: always
+
+provider:
+  name: aws
+  runtime: python3.8
+  lambdaHashingVersion: 20201221
+  profile: personal
+  region: sa-east-1
+
+functions:
+  cronHandler:
+    handler: src/handler.run
+    events:
+      - schedule: cron(0 9 * * ? *)
+
+plugins:
+  - serverless-python-requirements
+
+package:
+  exclude:
+    - .dynamodb/**
+    - .vscode/**
+    - node_modules/**
+    - yarn.lock
+    - package.json
+    - "**/__pycache__/**"
+    - ./config.*.json
+    - tmp/**
+    - temp/**
+    - venv/**
+    - src/*.ipynb
