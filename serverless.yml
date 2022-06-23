@@ -4,7 +4,7 @@ frameworkVersion: "2"
 
 custom:
   pythonRequirements:
-    dockerizePip: always
+    dockerizePip: true
 
 provider:
   name: aws
@@ -15,7 +15,7 @@ provider:
 
 functions:
   cronHandler:
-    handler: src/handler.run
+    handler: src/main.run
     events:
       - schedule: cron(0 9 * * ? *)
 

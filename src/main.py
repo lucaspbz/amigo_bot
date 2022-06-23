@@ -1,15 +1,15 @@
 import os
-from datetime import datetime, timedelta
+from datetime import datetime
 
 import pytz
 import requests
 from dateutil import parser
 from dotenv import load_dotenv
 
-from .messenger import send_message
+from src.messenger import send_message
 
 
-def main():
+def run(event, context):
     load_dotenv()
     login = str(os.getenv("LOGIN"))
     password = str(os.getenv("PASS"))
@@ -28,11 +28,9 @@ def main():
     user_id = res.json().get("user").get("config_agenda_users")[1:-1]
 
 
-    start_date = datetime.now().strftime('%Y-%m-%d')
-    end_date = datetime.now()
-    end_date = end_date + timedelta(days=1)
-    end_date = end_date.strftime('%Y-%m-%d')
-    get_agenda_url = f"https://api.amigoapp.com.br/api/attendance/agenda?end_date={end_date}&is_view_all_doctors=false&new_listing=true&start_date={start_date}&user_id={user_id}"
+    reference_date = datetime.now().strftime('%Y-%m-%d')
+
+    get_agenda_url = f"https://api.amigoapp.com.br/api/attendance/agenda?end_date={reference_date}&is_view_all_doctors=false&new_listing=true&start_date={reference_date}&user_id={user_id}"
 
     if debug:
         print("get_agenda_url:", get_agenda_url)
@@ -41,8 +39,6 @@ def main():
         "company-id": "3546",
         "referer": "https://amigoapp.com.br/"
     })
-    if debug:
-        print("res:", res)
 
     agenda_res = res.json()
 
@@ -60,14 +56,14 @@ def main():
 
 
     for entry in agenda_res_data:
-        start_date = entry.get("start_date")
+        reference_date = entry.get("start_date")
         end_date = entry.get("end_date")
         localFormat = "%Y-%m-%dT%H:%M:%S"
 
-        start_date = datetime.strptime(start_date[:-5],localFormat).replace(tzinfo=pytz.utc).astimezone(pytz.timezone('America/Sao_Paulo')).strftime('%H:%M')
+        reference_date = datetime.strptime(reference_date[:-5],localFormat).replace(tzinfo=pytz.utc).astimezone(pytz.timezone('America/Sao_Paulo')).strftime('%H:%M')
         end_date = datetime.strptime(end_date[:-5],localFormat).replace(tzinfo=pytz.utc).astimezone(pytz.timezone('America/Sao_Paulo')).strftime('%H:%M')
 
-        schedule_time = f"{start_date} - {end_date}"
+        schedule_time = f"{reference_date} - {end_date}"
         entries.append({
             "name": entry.get("patient").get("name"),
             "time": schedule_time
