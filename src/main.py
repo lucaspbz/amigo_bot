@@ -24,13 +24,11 @@ def run(event, context):
     if debug:
         print("login res:", res.json())
 
-    login_token = res.json().get("token")
-    user_id = res.json().get("user").get("config_agenda_users")[1:-1]
-
+    login_token = res.json().get("data").get("token")
 
     reference_date = datetime.now().strftime('%Y-%m-%d')
 
-    get_agenda_url = f"https://api.amigoapp.com.br/api/attendance/agenda?end_date={reference_date}&is_view_all_doctors=false&new_listing=true&start_date={reference_date}&user_id={user_id}"
+    get_agenda_url = f"https://api.amigoapp.com.br/api/attendance/agenda?end_date={reference_date}&is_view_all_doctors=false&new_listing=true&start_date={reference_date}"
 
     if debug:
         print("get_agenda_url:", get_agenda_url)
